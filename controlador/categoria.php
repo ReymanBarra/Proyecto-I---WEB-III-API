@@ -7,29 +7,6 @@ header("Content-Type: application/json");
 require_once("../configuracion/conexion.php");
 require_once("../modelos/Categoria.php");
 
- 
-// Crea una instancia de la clase Categoria para verificar el KEY
-$categoria = new Categoria();
-
-// Verifica si el encabezado `KEY` está presente y es válido en la base de datos
-$encabezados = getallheaders();
-if (!isset($encabezados['KEY'])) {
-    echo json_encode(["error" => "KEY no proporcionado"]);
-    exit();
-}
-
-// Debug: Mostrar el KEY recibido
-error_log("KEY recibido: " . $encabezados['KEY']);
-
-// Verifica si el KEY existe en la tabla usuario
-$key_valido = $categoria->verificar_key_usuario($encabezados['KEY']);
-error_log("Resultado verificación KEY: " . ($key_valido ? 'true' : 'false'));
-
-if (!$key_valido) {
-    echo json_encode(["error" => "KEY no válido - Acceso no autorizado", "key_recibido" => $encabezados['KEY']]);
-    exit();
-}
-
 // Crea una instancia de la clase Categoria
 $categoria = new Categoria();
 
