@@ -8,9 +8,6 @@ require_once("../configuracion/conexion.php");
 require_once("../modelos/EncabezadoFactura.php");
 require_once("../modelos/Categoria.php");
 
-// Configuración de la clave de cifrado (compartida)
-define("CLAVE_SECRETA", "0123456789abcdef0123456789abcdef");
-
 // Crea una instancia de la clase Categoria para verificar el KEY
 $categoria = new Categoria();
 
