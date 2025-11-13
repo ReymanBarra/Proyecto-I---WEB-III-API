@@ -1,26 +1,57 @@
 <?php
-// Clase Conectar para manejar la conexión a la base de datos
-class Conectar {
-    // Variable protegida para almacenar la instancia de la conexión
-    protected $conexion_bd;
-    
-    // Método protegido para establecer la conexión con la base de datos
-    protected function conectar_bd() {
+
+class Conectar
+{
+    private $conexion_bd;
+
+    // AHORA ES PUBLICA, NO PROTECTED
+    public function conectar_bd()
+    {
         try {
-            // Establece la conexión utilizando PDO
-            $conexion = $this->conexion_bd = new PDO("mysql:host=localhost;dbname=verduleria", "root", "1234");
-            return $conexion;
+            $this->conexion_bd = new PDO("mysql:host=localhost;dbname=verduleria", "root", "");
+            return $this->conexion_bd;
         } catch (Exception $e) {
-            // Si ocurre un error, muestra el mensaje de error y detiene la ejecución
-            print "Error en la base de datos: " . $e->getMessage() . "<br/>";
-            die();  // Detiene la ejecución
+            print "Error en la base de datos: " . $e->getMessage();
+            die();
         }
     }
 
-    // Método público para establecer la codificación de caracteres a UTF-8
-    public function establecer_codificacion() {
-        // Ejecuta la sentencia SQL para configurar la codificación de caracteres a UTF-8
+    public function establecer_codificacion()
+    {
         return $this->conexion_bd->query("SET NAMES 'utf8'");
     }
 }
+
+/* ============================================
+   FUNCIONES CRUD COMPATIBLES
+==============================================*/
+
+function ejecutarConsulta($sql)
+{
+    $db = new Conectar();
+    $pdo = $db->conectar_bd();            // AHORA SÍ SE PUEDE LLAMAR
+    $db->establecer_codificacion();
+    return $pdo->query($sql);
+}
+
+function ejecutarConsultaSimpleFila($sql)
+{
+    $db = new Conectar();
+    $pdo = $db->conectar_bd();
+    $db->establecer_codificacion();
+
+    $query = $pdo->query($sql);
+    return $query->fetch(PDO::FETCH_OBJ);
+}
+
+function ejecutarConsulta_retornarID($sql)
+{
+    $db = new Conectar();
+    $pdo = $db->conectar_bd();
+    $db->establecer_codificacion();
+
+    $pdo->query($sql);
+    return $pdo->lastInsertId();
+}
+
 ?>
