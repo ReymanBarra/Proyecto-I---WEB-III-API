@@ -1,127 +1,174 @@
 <?php
-
-// Establece el tipo de contenido a JSON
+// servicios/usuario.php
 header("Content-Type: application/json");
 
-// Incluye los archivos necesarios para la conexión a la base de datos y la clase Usuario
-require_once("../configuracion/conexion.php");
-require_once("../modelos/Usuario.php");
+try {
+    require_once(__DIR__ . "/../configuracion/conexion.php");
+    require_once(__DIR__ . "/../modelos/Usuario.php");
+    require_once(__DIR__ . "/../modelos/Api.php");
 
-// Configuración de la clave de cifrado (compartida)
-define("CLAVE_SECRETA", "0123456789abcdef0123456789abcdef");
 
-// Crea una instancia de la clase Usuario para verificar el KEY
-$usuario = new Usuario();
 
-// Verifica si el encabezado `KEY` está presente y es válido en la base de datos
-$encabezados = getallheaders();
-if (!isset($encabezados['KEY'])) {
-    echo json_encode(["error" => "KEY no proporcionado"]);
-    exit();
-}
 
-// Debug: Mostrar el KEY recibido
-error_log("KEY recibido: " . $encabezados['KEY']);
+    $usuario = new Usuario();
+    $Api = new Api();
 
-// Verifica si el KEY existe en la tabla usuario
-$key_valido = $usuario->verificar_key_usuario($encabezados['KEY']);
-error_log("Resultado verificación KEY: " . ($key_valido ? 'true' : 'false'));
+    $method = $_SERVER['REQUEST_METHOD'];
 
-if (!$key_valido) {
-    echo json_encode(["error" => "KEY no válido - Acceso no autorizado", "key_recibido" => $encabezados['KEY']]);
-    exit();
-}
+    //========== 1. VALIDAR HEADER =============
+    $codigo_header = $_SERVER['HTTP_CODIGO'] ?? null;
 
-// Si el KEY es válido, obtener los datos del usuario
-$datos_usuario = $usuario->obtener_usuario_por_key($encabezados['KEY']);
-if (!empty($datos_usuario)) {
-    echo json_encode($datos_usuario);
-    exit();
-}
-
-// Función para desencriptar datos en formato JSON con AES-256-ECB
-function Desencriptar_BODY($JSON) {
-    // Definir el tipo de cifrado (AES-256-ECB)
-    $cifrado = "aes-256-ecb";
-    
-    // Desencriptar usando openssl_decrypt
-    $JSON_desencriptado = openssl_decrypt(base64_decode($JSON), $cifrado, CLAVE_SECRETA, OPENSSL_RAW_DATA);
-    
-    // Verificar si la desencriptación falló
-    if ($JSON_desencriptado === false) {
-        // Devolver un mensaje de error si la desencriptación falla
-        return false;
+    if (!$codigo_header) {
+        echo json_encode(["Error" => "Acceso no autorizado - Código requerido"]);
+        exit();
     }
 
-    // Devolver los datos desencriptados
-    return $JSON_desencriptado;
-}
+    //========== 2. VERIFICAR LLAVE EN BD ============
+    $verificacion = $Api->VerificarKEY($codigo_header);
 
-// Crea una instancia de la clase Usuario
-$usuario = new Usuario();
+    if (empty($verificacion)) {
+        $desactivado = $Api->VerificarDesactivado($codigo_header);
+        echo json_encode([
+            "Error" => $desactivado ? "Credenciales desactivadas" : "Acceso no autorizado - Código inválido"
+        ]);
+        exit();
+    }
 
-// Obtiene y desencripta el JSON enviado en el BODY
-$body_encriptado = file_get_contents("php://input");
-$body = json_decode(Desencriptar_BODY($body_encriptado), true);
+    // llave obtenida de la BD
+    $llave = $verificacion[0]['llave'];
 
-// Si no se pudo desencriptar el JSON, devuelve un error
-if ($body === null) {
-    echo json_encode(["Error" => "Error al desencriptar los datos."]);
-    exit();
-}
+    //========== 3. DESENCRIPTAR BODY ===========
+    function desencriptar_BODY($json, $llave)
+    {
+        $cifrado = "aes-256-ecb";
+        $json_desencriptado = openssl_decrypt(
+            base64_decode($json),
+            $cifrado,
+            $llave,
+            OPENSSL_RAW_DATA
+        );
 
-// Define las operaciones basadas en el parámetro "op" de la URL
-switch ($_GET["op"]) {
+        return $json_desencriptado !== false ? $json_desencriptado : false;
+    }
 
-    // Obtiene todos los usuarios
-    case "ObtenerTodos":
-        // Llama al método para obtener todos los usuarios
-        $datos = $usuario->obtener_usuarios();
-        // Devuelve los datos en formato JSON
-        echo json_encode($datos);
-        break;
+    $body_encriptado = file_get_contents("php://input");
+    $body = [];
 
-    // Obtiene un usuario por su cédula
-    case "ObtenerPorCedula":
-        // Llama al método para obtener un usuario específico por cédula
-        $datos = $usuario->obtener_usuario_por_cedula($body["cedula"]);   
-        // Devuelve los datos del usuario en formato JSON
-        echo json_encode($datos);   
-        break;
+    if (!empty($body_encriptado)) {
+        $json_desencriptado = desencriptar_BODY($body_encriptado, $llave);
+        $body = json_decode($json_desencriptado, true);
 
-    // Inserta un nuevo usuario
-    case "Insertar":
-        // Llama al método para insertar un nuevo usuario
-        $datos = $usuario->insertar_usuario($body["cedula"], $body["nombre"], $body["llave"]);
-        // Devuelve una respuesta indicando que la inserción fue correcta
-        echo json_encode(["Correcto" => "Inserción Realizada"]);
-        break;
-
-    // Actualiza un usuario existente
-    case "Actualizar":
-        // Llama al método para actualizar un usuario existente
-        $datos = $usuario->actualizar_usuario($body["cedula"], $body["nombre"], $body["llave"]);
-        // Devuelve una respuesta indicando que la actualización fue correcta
-        echo json_encode(["Correcto" => "Actualización Realizada"]);
-        break;
-
-    // Elimina un usuario
-    case "Eliminar":
-        // Llama al método para eliminar un usuario
-        $datos = $usuario->eliminar_usuario($body["cedula"]);
-        // Devuelve una respuesta indicando que la eliminación fue correcta
-        echo json_encode(["Correcto" => "Eliminación Realizada"]);
-        break;
-
-    // Verifica credenciales de usuario (login)
-    case "Login":
-        // Llama al método para verificar las credenciales
-        $datos = $usuario->verificar_usuario($body["cedula"], $body["nombre"]);
-        if ($datos) {
-            echo json_encode(["Correcto" => "Login exitoso", "usuario" => $datos]);
-        } else {
-            echo json_encode(["Error" => "Credenciales incorrectas"]);
+        if ($body === null) {
+            echo json_encode(["Error" => "Error al desencriptar los datos"]);
+            exit();
         }
-        break;
+    }
+
+    //========== VARIABLES DEL CRUD ===========
+    $cedula = $body["cedula"] ?? ($_GET["cedula"] ?? "");
+    $nombre = $body["nombre"] ?? "";
+    $edad = $body["edad"] ?? "";
+    $telefono = $body["telefono"] ?? "";
+
+    //===================================================
+    //                   CRUD
+    //===================================================
+    switch ($method) {
+
+        //================ INSERTAR =================
+        case "POST":
+            $rspta = $usuario->insertar($cedula, $nombre, $edad, $telefono);
+            if (intval($rspta) == 1) {
+                echo json_encode(["Correcto" => "Usuario agregado"]);
+            } elseif (intval($rspta) == 1062) {
+                echo json_encode(["Error" => "La cédula ya existe"]);
+            } else {
+                echo json_encode(["Error" => "No se pudo agregar el usuario"]);
+            }
+            break;
+
+        //================ EDITAR =================
+        case "PUT":
+            $rspta = $usuario->editar($cedula, $nombre, $edad, $telefono);
+            echo json_encode(
+                $rspta
+                ? ["Correcto" => "Usuario actualizado"]
+                : ["Error" => "Usuario no se pudo actualizar"]
+            );
+            break;
+
+        //================ ELIMINAR =================
+        case "DELETE":
+            $rspta = $usuario->eliminar($cedula);
+            echo json_encode(
+                $rspta
+                ? ["Correcto" => "Usuario eliminado"]
+                : ["Error" => "Usuario no se pudo eliminar"]
+            );
+            break;
+
+        //================ LISTAR / MOSTRAR =================
+        case "GET":
+
+            if (!empty($cedula)) {
+                $rspta = $usuario->mostrar($cedula);
+
+                if (!empty($rspta) && isset($rspta->cedula)) {
+                    echo json_encode([
+                        "cedula" => $rspta->cedula,
+                        "nombre" => $rspta->nombre,
+                        "edad" => $rspta->edad,
+                        "telefono" => $rspta->telefono
+                    ]);
+                    break;
+                }
+
+                echo json_encode(["Error" => "Usuario no encontrado"]);
+                break;
+            }
+
+            // LISTAR TODOS
+            $rspta = $usuario->listar();
+            $data = [];
+
+            while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+                $data[] = [
+                    "0" => $reg->cedula,
+                    "1" => $reg->nombre,
+                    "2" => $reg->edad,
+                    "3" => $reg->telefono
+                ];
+            }
+
+            echo json_encode([
+                "sEcho" => 1,
+                "iTotalRecords" => count($data),
+                "iTotalDisplayRecords" => count($data),
+                "aaData" => $data
+            ]);
+            break;
+
+        default:
+            http_response_code(405);
+            echo json_encode(["Error" => "Método HTTP no permitido"]);
+            break;
+    }
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        "Error" => "Error interno",
+        "Mensaje" => $e->getMessage(),
+        "Archivo" => $e->getFile(),
+        "Linea" => $e->getLine()
+    ]);
+} catch (Error $e) {
+    http_response_code(500);
+    echo json_encode([
+        "Error" => "Error fatal",
+        "Mensaje" => $e->getMessage(),
+        "Archivo" => $e->getFile(),
+        "Linea" => $e->getLine()
+    ]);
 }
 ?>
