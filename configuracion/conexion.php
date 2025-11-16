@@ -7,7 +7,7 @@ class Conectar
     public function conectar_bd()
     {
         try {
-            // Datos internos de Railway
+            // Host interno de Railway
             $host = "mysql.railway.internal";
             $port = "3306";
             $dbname = "railway";
