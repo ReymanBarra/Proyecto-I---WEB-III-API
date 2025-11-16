@@ -7,13 +7,15 @@ class Conectar
     public function conectar_bd()
     {
         try {
-            // Host interno de Railway
-            $host = "mysql.railway.internal";
-            $port = "3306";
-            $dbname = "railway";
-            $user = "root";
-            $pass = "xFDGacnilabXUBmAhpwRsfTUT0aYVAsi";
 
+            // VARIABLES DE ENTORNO QUE RAILWAY INYECTA AUTOMÁTICAMENTE
+            $host = getenv("MYSQLHOST");
+            $port = getenv("MYSQLPORT");
+            $dbname = getenv("MYSQL_DATABASE"); 
+            $user = getenv("MYSQLUSER");
+            $pass = getenv("MYSQLPASSWORD");
+
+            // CONEXIÓN PDO
             $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
 
             $this->conexion_bd = new PDO($dsn, $user, $pass, [
@@ -47,7 +49,6 @@ function ejecutarConsultaSimpleFila($sql)
     $db = new Conectar();
     $pdo = $db->conectar_bd();
     $db->establecer_codificacion();
-
     $query = $pdo->query($sql);
     return $query->fetch(PDO::FETCH_OBJ);
 }
@@ -57,9 +58,6 @@ function ejecutarConsulta_retornarID($sql)
     $db = new Conectar();
     $pdo = $db->conectar_bd();
     $db->establecer_codificacion();
-
     $pdo->query($sql);
     return $pdo->lastInsertId();
 }
-
-?>
