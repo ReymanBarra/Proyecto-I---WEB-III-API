@@ -8,10 +8,14 @@ class Conectar
     {
         try {
             $this->conexion_bd = new PDO(
-                "mysql:host=sql109.iceiy.com;dbname=icei_40334935_apiw_dbVerduleria",
-                "icei_40334935",
-                "b8Gi91nFMkCh"
+                "mysql:host=shuttle.proxy.rlwy.net;port=46221;dbname=railway",
+                "root",
+                "xFDGacnilabXUBmAhpwRsfTUTOaYVAsi"
             );
+
+            // Habilitar errores
+            $this->conexion_bd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
             return $this->conexion_bd;
         } catch (Exception $e) {
             print "Error en la base de datos: " . $e->getMessage();
@@ -24,10 +28,6 @@ class Conectar
         return $this->conexion_bd->query("SET NAMES 'utf8'");
     }
 }
-
-/* ============================================
-   FUNCIONES CRUD COMPATIBLES
-==============================================*/
 
 function ejecutarConsulta($sql)
 {
