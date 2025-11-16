@@ -8,14 +8,10 @@ class Conectar
     {
         try {
             $this->conexion_bd = new PDO(
-                "mysql:host=shuttle.proxy.rlwy.net;port=46221;dbname=railway",
+                "mysql:host=mysql.railway.internal;port=3306;dbname=railway",
                 "root",
-                "xFDGacnilabXUBmAhpwRsfTUTOaYVAsi"
+                "xFDGacnilabXUBmAhpwRsfTUT0aYVAsi"
             );
-
-            // Habilitar errores
-            $this->conexion_bd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
             return $this->conexion_bd;
         } catch (Exception $e) {
             print "Error en la base de datos: " . $e->getMessage();
