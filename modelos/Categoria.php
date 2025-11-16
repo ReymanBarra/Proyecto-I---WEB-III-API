@@ -124,7 +124,7 @@ class Categoria extends Conectar {
             $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
             
             // Debug: Log del resultado
-            error_log("Resultado de la consulta: " . json_encode($resultado));
+            error_log("Resultado de la consulta: " . json_encode($resultado, JSON_UNESCAPED_UNICODE));
             
             // Retorna true si el usuario existe (total > 0), false si no existe
             return $resultado['total'] > 0;

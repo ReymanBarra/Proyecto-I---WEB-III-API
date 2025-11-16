@@ -31,7 +31,7 @@ if ($operacion) {
             // Llama al método para obtener todas las categorías
             $datos = $categoria->obtener_categorias();
             // Devuelve los datos en formato JSON
-            echo json_encode($datos);
+            echo json_encode($datos, JSON_UNESCAPED_UNICODE);
             break;
 
         // Obtiene una categoría por su ID
@@ -39,7 +39,7 @@ if ($operacion) {
             // Llama al método para obtener una categoría específica por ID
             $datos = $categoria->obtener_categoria_por_id($body["id"]);   
             // Devuelve los datos de la categoría en formato JSON
-            echo json_encode($datos);   
+            echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
             break;
 
         // Inserta una nueva categoría
@@ -47,7 +47,7 @@ if ($operacion) {
             // Llama al método para insertar una nueva categoría
             $datos = $categoria->insertar_categoria($body["nombre"]);
             // Devuelve una respuesta indicando que la inserción fue correcta
-            echo json_encode(["Correcto" => "Inserción Realizada"]);
+            echo json_encode(["Correcto" => "Inserción Realizada"], JSON_UNESCAPED_UNICODE);
             break;
 
         // Actualiza una categoría existente
@@ -55,7 +55,7 @@ if ($operacion) {
             // Llama al método para actualizar una categoría existente
             $datos = $categoria->actualizar_categoria($body["id"], $body["nombre"]);
             // Devuelve una respuesta indicando que la actualización fue correcta
-            echo json_encode(["Correcto" => "Actualización Realizada"]);
+            echo json_encode(["Correcto" => "Actualización Realizada"], JSON_UNESCAPED_UNICODE);
             break;
 
         // Elimina una categoría
@@ -63,7 +63,7 @@ if ($operacion) {
             // Llama al método para eliminar una categoría
             $datos = $categoria->eliminar_categoria($body["id"]);
             // Devuelve una respuesta indicando que la eliminación fue correcta
-            echo json_encode(["Correcto" => "Eliminación Realizada"]);
+            echo json_encode(["Correcto" => "Eliminación Realizada"], JSON_UNESCAPED_UNICODE);
             break;
     }
 } else {
@@ -76,15 +76,15 @@ if ($operacion) {
                 // GET con ID: obtener categoría específica
                 $datos = $categoria->obtener_categoria_por_id($_GET['id']);
                 if (!empty($datos)) {
-                    echo json_encode($datos[0]); // Devolver solo el objeto, no array
+                    echo json_encode($datos[0], JSON_UNESCAPED_UNICODE); // Devolver solo el objeto, no array
                 } else {
                     http_response_code(404);
-                    echo json_encode(["error" => "Categoría no encontrada"]);
+                    echo json_encode(["error" => "Categoría no encontrada"], JSON_UNESCAPED_UNICODE);
                 }
             } else {
                 // GET sin ID: obtener todas las categorías
                 $datos = $categoria->obtener_categorias();
-                echo json_encode($datos);
+                echo json_encode($datos, JSON_UNESCAPED_UNICODE);
             }
             break;
 
@@ -93,10 +93,10 @@ if ($operacion) {
             if (isset($body["nombre"])) {
                 $categoria->insertar_categoria($body["nombre"]);
                 http_response_code(201);
-                echo json_encode(["mensaje" => "Categoría creada exitosamente"]);
+                echo json_encode(["mensaje" => "Categoría creada exitosamente"], JSON_UNESCAPED_UNICODE);
             } else {
                 http_response_code(400);
-                echo json_encode(["error" => "Datos incompletos - se requiere 'nombre'"]);
+                echo json_encode(["error" => "Datos incompletos - se requiere 'nombre'"], JSON_UNESCAPED_UNICODE);
             }
             break;
 
@@ -104,10 +104,10 @@ if ($operacion) {
             // PUT: Actualizar categoría existente
             if (isset($_GET['id']) && isset($body["nombre"])) {
                 $resultado = $categoria->actualizar_categoria($_GET['id'], $body["nombre"]);
-                echo json_encode(["mensaje" => "Categoría actualizada exitosamente"]);
+                echo json_encode(["mensaje" => "Categoría actualizada exitosamente"], JSON_UNESCAPED_UNICODE);
             } else {
                 http_response_code(400);
-                echo json_encode(["error" => "Datos incompletos - se requieren ID y nombre"]);
+                echo json_encode(["error" => "Datos incompletos - se requieren ID y nombre"], JSON_UNESCAPED_UNICODE);
             }
             break;
 
@@ -115,17 +115,17 @@ if ($operacion) {
             // DELETE: Eliminar categoría
             if (isset($_GET['id'])) {
                 $categoria->eliminar_categoria($_GET['id']);
-                echo json_encode(["mensaje" => "Categoría eliminada exitosamente"]);
+                echo json_encode(["mensaje" => "Categoría eliminada exitosamente"], JSON_UNESCAPED_UNICODE);
             } else {
                 http_response_code(400);
-                echo json_encode(["error" => "Se requiere ID para eliminar"]);
+                echo json_encode(["error" => "Se requiere ID para eliminar"], JSON_UNESCAPED_UNICODE);
             }
             break;
 
         default:
             // Método no soportado
             http_response_code(405);
-            echo json_encode(["error" => "Método HTTP no soportado"]);
+            echo json_encode(["error" => "Método HTTP no soportado"], JSON_UNESCAPED_UNICODE);
             break;
     }
 }

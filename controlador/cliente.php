@@ -16,7 +16,7 @@ $categoria = new Categoria();
 // Verifica si el encabezado `KEY` está presente y es válido en la base de datos
 $encabezados = getallheaders();
 if (!isset($encabezados['KEY'])) {
-    echo json_encode(["error" => "KEY no proporcionado"]);
+    echo json_encode(["error" => "KEY no proporcionado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -24,7 +24,7 @@ if (!isset($encabezados['KEY'])) {
 $key_valido = $categoria->verificar_key_usuario($encabezados['KEY']);
 
 if (!$key_valido) {
-    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"]);
+    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -48,7 +48,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener todos los clientes
         $datos = $cliente->obtener_clientes();
         // Devuelve los datos en formato JSON
-        echo json_encode($datos);
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
         break;
 
     // Obtiene un cliente por su cédula
@@ -56,7 +56,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener un cliente específico por cédula
         $datos = $cliente->obtener_cliente_por_cedula($body["cedula"]);   
         // Devuelve los datos del cliente en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Busca clientes por nombre
@@ -64,7 +64,7 @@ switch ($_GET["op"]) {
         // Llama al método para buscar clientes por nombre
         $datos = $cliente->buscar_clientes_por_nombre($body["nombre"]);   
         // Devuelve los datos de los clientes en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Inserta un nuevo cliente
@@ -73,7 +73,7 @@ switch ($_GET["op"]) {
         $telefono = isset($body["telefono"]) ? $body["telefono"] : null;
         $datos = $cliente->insertar_cliente($body["cedula"], $body["nombre"], $telefono);
         // Devuelve una respuesta indicando que la inserción fue correcta
-        echo json_encode(["Correcto" => "Inserción Realizada"]);
+        echo json_encode(["Correcto" => "Inserción Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 
     // Actualiza un cliente existente
@@ -82,7 +82,7 @@ switch ($_GET["op"]) {
         $telefono = isset($body["telefono"]) ? $body["telefono"] : null;
         $datos = $cliente->actualizar_cliente($body["cedula"], $body["nombre"], $telefono);
         // Devuelve una respuesta indicando que la actualización fue correcta
-        echo json_encode(["Correcto" => "Actualización Realizada"]);
+        echo json_encode(["Correcto" => "Actualización Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 
     // Elimina un cliente
@@ -90,7 +90,7 @@ switch ($_GET["op"]) {
         // Llama al método para eliminar un cliente
         $datos = $cliente->eliminar_cliente($body["cedula"]);
         // Devuelve una respuesta indicando que la eliminación fue correcta
-        echo json_encode(["Correcto" => "Eliminación Realizada"]);
+        echo json_encode(["Correcto" => "Eliminación Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 }
 ?>

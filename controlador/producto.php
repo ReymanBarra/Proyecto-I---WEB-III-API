@@ -28,7 +28,7 @@ if (!$KEY) {
 
 // 3. Si NO hay KEY → error
 if (!$KEY) {
-    echo json_encode(["error" => "KEY no proporcionado"]);
+    echo json_encode(["error" => "KEY no proporcionado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -36,7 +36,7 @@ if (!$KEY) {
 $key_valido = $categoria->verificar_key_usuario($KEY);
 
 if (!$key_valido) {
-    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"]);
+    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -63,37 +63,37 @@ switch ($_GET["op"]) {
     // Obtiene todos los productos
     case "ObtenerTodos":
         $datos = $producto->obtener_productos();
-        echo json_encode($datos);
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
         break;
 
     // Obtiene un producto por su código
     case "ObtenerPorCodigo":
         $datos = $producto->obtener_producto_por_codigo($body["codigo"]);
-        echo json_encode($datos);
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
         break;
 
     // Obtiene productos por categoría
     case "ObtenerPorCategoria":
         $datos = $producto->obtener_productos_por_categoria($body["id_categoria"]);
-        echo json_encode($datos);
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
         break;
 
     // Inserta un nuevo producto
     case "Insertar":
         $producto->insertar_producto($body["codigo"], $body["nombre"], $body["precio"], $body["id_categoria"]);
-        echo json_encode(["Correcto" => "Inserción Realizada"]);
+        echo json_encode(["Correcto" => "Inserción Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 
     // Actualiza un producto existente
     case "Actualizar":
         $producto->actualizar_producto($body["codigo"], $body["nombre"], $body["precio"], $body["id_categoria"]);
-        echo json_encode(["Correcto" => "Actualización Realizada"]);
+        echo json_encode(["Correcto" => "Actualización Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 
     // Elimina un producto
     case "Eliminar":
         $producto->eliminar_producto($body["codigo"]);
-        echo json_encode(["Correcto" => "Eliminación Realizada"]);
+        echo json_encode(["Correcto" => "Eliminación Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 }
 

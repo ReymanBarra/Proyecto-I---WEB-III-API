@@ -15,7 +15,7 @@ $categoria = new Categoria();
 // Verifica si el encabezado `KEY` está presente y es válido en la base de datos
 $encabezados = getallheaders();
 if (!isset($encabezados['KEY'])) {
-    echo json_encode(["error" => "KEY no proporcionado"]);
+    echo json_encode(["error" => "KEY no proporcionado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -23,7 +23,7 @@ if (!isset($encabezados['KEY'])) {
 $key_valido = $categoria->verificar_key_usuario($encabezados['KEY']);
 
 if (!$key_valido) {
-    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"]);
+    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -47,7 +47,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener todos los detalles
         $datos = $detalle->obtener_detalles();
         // Devuelve los datos en formato JSON
-        echo json_encode($datos);
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
         break;
 
     // Obtiene un detalle por su ID
@@ -55,7 +55,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener un detalle específico por ID
         $datos = $detalle->obtener_detalle_por_id($body["id_detalle"]);   
         // Devuelve los datos del detalle en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Obtiene detalles por factura
@@ -63,7 +63,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener detalles por factura
         $datos = $detalle->obtener_detalles_por_factura($body["id_factura"]);   
         // Devuelve los datos de los detalles en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Obtiene productos más vendidos (reporte)
@@ -72,7 +72,7 @@ switch ($_GET["op"]) {
         $limite = isset($body["limite"]) ? $body["limite"] : 10;
         $datos = $detalle->obtener_productos_mas_vendidos($limite);   
         // Devuelve los datos del reporte en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Calcula el total de una factura
@@ -80,7 +80,7 @@ switch ($_GET["op"]) {
         // Llama al método para calcular el total de una factura
         $total = $detalle->calcular_total_factura($body["id_factura"]);   
         // Devuelve el total calculado en formato JSON
-        echo json_encode(["total" => $total]);   
+        echo json_encode(["total" => $total], JSON_UNESCAPED_UNICODE);   
         break;
 
     // Inserta un nuevo detalle
@@ -88,9 +88,9 @@ switch ($_GET["op"]) {
         // Llama al método para insertar un nuevo detalle
         $id_detalle = $detalle->insertar_detalle($body["id_factura"], $body["codigo_producto"], $body["precio_producto"], $body["cantidad_producto"]);
         if ($id_detalle) {
-            echo json_encode(["Correcto" => "Inserción Realizada", "id_detalle" => $id_detalle]);
+            echo json_encode(["Correcto" => "Inserción Realizada", "id_detalle" => $id_detalle], JSON_UNESCAPED_UNICODE);
         } else {
-            echo json_encode(["Error" => "Error al insertar detalle"]);
+            echo json_encode(["Error" => "Error al insertar detalle"], JSON_UNESCAPED_UNICODE);
         }
         break;
 
@@ -99,7 +99,7 @@ switch ($_GET["op"]) {
         // Llama al método para actualizar un detalle existente
         $datos = $detalle->actualizar_detalle($body["id_detalle"], $body["id_factura"], $body["codigo_producto"], $body["precio_producto"], $body["cantidad_producto"]);
         // Devuelve una respuesta indicando que la actualización fue correcta
-        echo json_encode(["Correcto" => "Actualización Realizada"]);
+        echo json_encode(["Correcto" => "Actualización Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 
     // Elimina un detalle
@@ -107,7 +107,7 @@ switch ($_GET["op"]) {
         // Llama al método para eliminar un detalle
         $datos = $detalle->eliminar_detalle($body["id_detalle"]);
         // Devuelve una respuesta indicando que la eliminación fue correcta
-        echo json_encode(["Correcto" => "Eliminación Realizada"]);
+        echo json_encode(["Correcto" => "Eliminación Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 }
 ?>

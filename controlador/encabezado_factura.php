@@ -14,7 +14,7 @@ $categoria = new Categoria();
 // Verifica si el encabezado `KEY` está presente y es válido en la base de datos
 $encabezados = getallheaders();
 if (!isset($encabezados['KEY'])) {
-    echo json_encode(["error" => "KEY no proporcionado"]);
+    echo json_encode(["error" => "KEY no proporcionado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -22,7 +22,7 @@ if (!isset($encabezados['KEY'])) {
 $key_valido = $categoria->verificar_key_usuario($encabezados['KEY']);
 
 if (!$key_valido) {
-    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"]);
+    echo json_encode(["error" => "KEY no válido - Acceso no autorizado"], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -46,7 +46,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener todas las facturas
         $datos = $factura->obtener_facturas();
         // Devuelve los datos en formato JSON
-        echo json_encode($datos);
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);
         break;
 
     // Obtiene una factura por su ID
@@ -54,7 +54,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener una factura específica por ID
         $datos = $factura->obtener_factura_por_id($body["id"]);   
         // Devuelve los datos de la factura en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Obtiene facturas por cliente
@@ -62,7 +62,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener facturas por cliente
         $datos = $factura->obtener_facturas_por_cliente($body["cedula_cliente"]);   
         // Devuelve los datos de las facturas en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Obtiene facturas por rango de fechas
@@ -70,7 +70,7 @@ switch ($_GET["op"]) {
         // Llama al método para obtener facturas por rango de fechas
         $datos = $factura->obtener_facturas_por_fecha($body["fecha_inicio"], $body["fecha_fin"]);   
         // Devuelve los datos de las facturas en formato JSON
-        echo json_encode($datos);   
+        echo json_encode($datos, JSON_UNESCAPED_UNICODE);   
         break;
 
     // Inserta una nueva factura
@@ -78,9 +78,9 @@ switch ($_GET["op"]) {
         // Llama al método para insertar una nueva factura
         $id_factura = $factura->insertar_factura($body["cedula_cliente"], $body["fecha"], $body["total"]);
         if ($id_factura) {
-            echo json_encode(["Correcto" => "Inserción Realizada", "id_factura" => $id_factura]);
+            echo json_encode(["Correcto" => "Inserción Realizada", "id_factura" => $id_factura], JSON_UNESCAPED_UNICODE);
         } else {
-            echo json_encode(["Error" => "Error al insertar factura"]);
+            echo json_encode(["Error" => "Error al insertar factura"], JSON_UNESCAPED_UNICODE);
         }
         break;
 
@@ -89,7 +89,7 @@ switch ($_GET["op"]) {
         // Llama al método para actualizar una factura existente
         $datos = $factura->actualizar_factura($body["id"], $body["cedula_cliente"], $body["fecha"], $body["total"]);
         // Devuelve una respuesta indicando que la actualización fue correcta
-        echo json_encode(["Correcto" => "Actualización Realizada"]);
+        echo json_encode(["Correcto" => "Actualización Realizada"], JSON_UNESCAPED_UNICODE);
         break;
 
     // Elimina una factura
@@ -97,9 +97,9 @@ switch ($_GET["op"]) {
         // Llama al método para eliminar una factura
         $resultado = $factura->eliminar_factura($body["id"]);
         if ($resultado) {
-            echo json_encode(["Correcto" => "Eliminación Realizada"]);
+            echo json_encode(["Correcto" => "Eliminación Realizada"], JSON_UNESCAPED_UNICODE);
         } else {
-            echo json_encode(["Error" => "Error al eliminar factura"]);
+            echo json_encode(["Error" => "Error al eliminar factura"], JSON_UNESCAPED_UNICODE);
         }
         break;
 }
