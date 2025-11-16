@@ -7,13 +7,11 @@ class Conectar
     public function conectar_bd()
     {
         try {
-
-            // Credenciales reales de Railway
-            $host = "shuttle.proxy.rlwy.net";   // HOST EXTERNO
-            $port = "46221";                    // PUERTO EXTERNO
-            $dbname = "railway";                // NOMBRE DE TU BD
-            $user = "root";                     // USUARIO
-            $pass = "xFDGacnilabXUBmAhpwRsfTUT0aYVAsi";  // CONTRASEÑA
+            $host = "shuttle.proxy.rlwy.net";      // Host externo
+            $port = "46221";                       // Puerto externo
+            $dbname = "railway";
+            $user = "root";
+            $pass = "xFDGacnilabXUBmAhpwRsfTUT0aYVAsi";
 
             $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8";
 
