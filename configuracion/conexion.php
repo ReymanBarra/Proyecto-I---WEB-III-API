@@ -7,8 +7,9 @@ class Conectar
     public function conectar_bd()
     {
         try {
-            $host = "shuttle.proxy.rlwy.net";      // Host externo
-            $port = "46221";                       // Puerto externo
+            // Datos internos de Railway
+            $host = "mysql.railway.internal";
+            $port = "3306";
             $dbname = "railway";
             $user = "root";
             $pass = "xFDGacnilabXUBmAhpwRsfTUT0aYVAsi";
