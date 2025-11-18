@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 0);
+error_reporting(0);
+header("Content-Type: application/json; charset=UTF-8");
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Origin, Content-Type, Authorization, X-Requested-With");
