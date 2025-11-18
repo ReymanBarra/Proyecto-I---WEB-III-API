@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 // Establece el tipo de contenido a JSON
-// header("Content-Type: application/json");
+ header("Content-Type: application/json");
 
 // Incluye los archivos necesarios para la conexión a la base de datos y la clase Categoria
 require_once("../configuracion/conexion.php");
