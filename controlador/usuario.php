@@ -1,6 +1,18 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Origin, Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
+
+// Preflight request handling
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+// Establece el tipo de contenido a JSON
+ //header("Content-Type: application/json");
 // servicios/usuario.php
-header("Content-Type: application/json");
+//header("Content-Type: application/json");
 
 try {
     require_once(__DIR__ . "/../configuracion/conexion.php");
@@ -19,7 +31,7 @@ try {
     $codigo_header = $_SERVER['HTTP_CODIGO'] ?? null;
 
     if (!$codigo_header) {
-        echo json_encode(["Error" => "Acceso no autorizado - Código requerido"], JSON_UNESCAPED_UNICODE);
+        echo json_encode(["Error" => "Acceso no autorizado - Código requerido"]);
         exit();
     }
 
@@ -30,7 +42,7 @@ try {
         $desactivado = $Api->VerificarDesactivado($codigo_header);
         echo json_encode([
             "Error" => $desactivado ? "Credenciales desactivadas" : "Acceso no autorizado - Código inválido"
-        ], JSON_UNESCAPED_UNICODE);
+        ]);
         exit();
     }
 
@@ -59,7 +71,7 @@ try {
         $body = json_decode($json_desencriptado, true);
 
         if ($body === null) {
-            echo json_encode(["Error" => "Error al desencriptar los datos"], JSON_UNESCAPED_UNICODE);
+            echo json_encode(["Error" => "Error al desencriptar los datos"]);
             exit();
         }
     }
@@ -79,11 +91,11 @@ try {
         case "POST":
             $rspta = $usuario->insertar($cedula, $nombre, $edad, $telefono);
             if (intval($rspta) == 1) {
-                echo json_encode(["Correcto" => "Usuario agregado"], JSON_UNESCAPED_UNICODE);
+                echo json_encode(["Correcto" => "Usuario agregado"]);
             } elseif (intval($rspta) == 1062) {
-                echo json_encode(["Error" => "La cédula ya existe"], JSON_UNESCAPED_UNICODE);
+                echo json_encode(["Error" => "La cédula ya existe"]);
             } else {
-                echo json_encode(["Error" => "No se pudo agregar el usuario"], JSON_UNESCAPED_UNICODE);
+                echo json_encode(["Error" => "No se pudo agregar el usuario"]);
             }
             break;
 
@@ -93,8 +105,7 @@ try {
             echo json_encode(
                 $rspta
                 ? ["Correcto" => "Usuario actualizado"]
-                : ["Error" => "Usuario no se pudo actualizar"],
-                JSON_UNESCAPED_UNICODE
+                : ["Error" => "Usuario no se pudo actualizar"]
             );
             break;
 
@@ -104,8 +115,7 @@ try {
             echo json_encode(
                 $rspta
                 ? ["Correcto" => "Usuario eliminado"]
-                : ["Error" => "Usuario no se pudo eliminar"],
-                JSON_UNESCAPED_UNICODE
+                : ["Error" => "Usuario no se pudo eliminar"]
             );
             break;
 
@@ -121,11 +131,11 @@ try {
                         "nombre" => $rspta->nombre,
                         "edad" => $rspta->edad,
                         "telefono" => $rspta->telefono
-                    ], JSON_UNESCAPED_UNICODE);
+                    ]);
                     break;
                 }
 
-                echo json_encode(["Error" => "Usuario no encontrado"], JSON_UNESCAPED_UNICODE);
+                echo json_encode(["Error" => "Usuario no encontrado"]);
                 break;
             }
 
@@ -147,12 +157,12 @@ try {
                 "iTotalRecords" => count($data),
                 "iTotalDisplayRecords" => count($data),
                 "aaData" => $data
-            ], JSON_UNESCAPED_UNICODE);
+            ]);
             break;
 
         default:
             http_response_code(405);
-                echo json_encode(["Error" => "Método HTTP no permitido"], JSON_UNESCAPED_UNICODE);
+            echo json_encode(["Error" => "Método HTTP no permitido"]);
             break;
     }
 
@@ -163,7 +173,7 @@ try {
         "Mensaje" => $e->getMessage(),
         "Archivo" => $e->getFile(),
         "Linea" => $e->getLine()
-    ], JSON_UNESCAPED_UNICODE);
+    ]);
 } catch (Error $e) {
     http_response_code(500);
     echo json_encode([
@@ -171,6 +181,6 @@ try {
         "Mensaje" => $e->getMessage(),
         "Archivo" => $e->getFile(),
         "Linea" => $e->getLine()
-    ], JSON_UNESCAPED_UNICODE);
+    ]);
 }
 ?>
