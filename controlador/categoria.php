@@ -1,22 +1,16 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-
-// PERMITIR TODOS LOS MÉTODOS
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-
-// PERMITIR TODOS LOS HEADERS PERSONALIZADOS
-header("Access-Control-Allow-Headers: *");
-
-// OPCIONAL: permitir credenciales si las usás (cookies/autenticación)
+header("Access-Control-Allow-Headers: Origin, Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true");
 
-// Manejar la petición preflight
+// Preflight request handling
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 // Establece el tipo de contenido a JSON
-header("Content-Type: application/json");
+// header("Content-Type: application/json");
 
 // Incluye los archivos necesarios para la conexión a la base de datos y la clase Categoria
 require_once("../configuracion/conexion.php");
