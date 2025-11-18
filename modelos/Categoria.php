@@ -96,8 +96,8 @@ class Categoria extends Conectar {
         // Ejecuta la sentencia
         $sentencia->execute();
 
-        // Retorna el resultado (aunque no es necesario para un delete, se puede omitir)
-        return $resultado = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+        // Retorna true si se ejecutó correctamente
+        return true;
     }
 
     // Verifica si un usuario existe en la tabla usuarios
