@@ -1,7 +1,23 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+$allowed_origins = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://localhost:3000',
+    'http://localhost:5500',
+    'http://localhost:8080',
+    'null' // Para archivos abiertos directamente (file://)
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? 'null';
+
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+} else {
+    header("Access-Control-Allow-Origin: *");
+}
+
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Headers: Content-Type, CODIGO, Authorization");
 header("Access-Control-Allow-Credentials: true");
 
 // Manejo de preflight
