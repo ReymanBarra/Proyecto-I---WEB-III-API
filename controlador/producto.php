@@ -9,28 +9,11 @@ require_once("../modelos/Producto.php");
 require_once("../modelos/Categoria.php");
 
 // Crea una instancia de la clase Categoria para verificar el KEY
-$categoria = new Categoria();
+
 
 /* ===========================================
    VALIDACIÓN DEL HEADER KEY (CORREGIDA)
-   =========================================== */
 
-// 1. Intentar obtener KEY desde $_SERVER (XAMPP lo convierte en HTTP_KEY)
-$KEY = $_SERVER['HTTP_KEY'] ?? null;
-
-// 2. Si no vino por ahí, intentarlo por getallheaders()
-if (!$KEY) {
-    $encabezados = array_change_key_case(getallheaders(), CASE_LOWER);
-    if (isset($encabezados['key'])) {
-        $KEY = $encabezados['key'];
-    }
-}
-
-// 3. Si NO hay KEY → error
-if (!$KEY) {
-    echo json_encode(["error" => "KEY no proporcionado"], JSON_UNESCAPED_UNICODE);
-    exit();
-}
 
 // 4. Validar el KEY en la base de datos
 $key_valido = $categoria->verificar_key_usuario($KEY);
