@@ -1,5 +1,4 @@
 <?php
-
 // Clase Categoria hereda de la clase Conectar
 class Categoria extends Conectar {
 
