@@ -1,4 +1,5 @@
 <?php
+<<<<<<< Updated upstream
 $allowed_origins = [
     'http://localhost',
     'http://127.0.0.1',
@@ -29,13 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
  //header("Content-Type: application/json");
 // servicios/usuario.php
 //header("Content-Type: application/json");
+=======
+
+header("Content-Type: application/json");
+>>>>>>> Stashed changes
 
 try {
     require_once(__DIR__ . "/../configuracion/conexion.php");
     require_once(__DIR__ . "/../modelos/Usuario.php");
     require_once(__DIR__ . "/../modelos/Api.php");
-
-
 
 
     $usuario = new Usuario();
